@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Self Assessment — WelfareWatch{% endblock %}
+{% block content %}
+<div class="assessment-page">
+  <div class="container py-5">
+    <a href="{{ url_for('dashboard') }}" class="back-link"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
+    <div class="assessment-header text-center mt-3">
+      <span class="eyebrow">Voluntary & Confidential</span>
+      <h1>Wellness Self-Assessment</h1>
+      <p>These questions help understand your well-being and support better welfare planning.</p>
+      <div class="assessment-meta"><span><i class="bi bi-clock"></i> Takes 3–5 mins</span><span><i class="bi bi-shield-check"></i> Confidential</span><span><i class="bi bi-heart-fill"></i> For your well-being</span></div>
+    </div>
+
+    <div class="assessment-card">
+      <div class="progress mb-4"><div id="progressBar" class="progress-bar" style="width:12.5%"></div></div>
+      <div class="d-flex justify-content-between small text-muted mb-4"><span id="progressText">Question 1 of {{ questions|length }}</span><span id="percentText">13%</span></div>
+
+      <form id="assessmentForm">
+        {% for q in questions %}
+        <div class="question-step {% if not loop.first %}d-none{% endif %}" data-index="{{ loop.index0 }}">
+          <span class="question-category"><i class="bi bi-heart-pulse"></i> {{ q.category }}</span>
+          <h3>{{ q.question }}</h3>
+          <div class="options">
+            {% for option in q.options %}
+            <label class="option">
+              <input type="radio" name="{{ q.id }}" value="{{ option }}" required>
+              <span>{{ option }}</span>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+
+        <div class="d-flex justify-content-between mt-5">
+          <button type="button" id="prevBtn" class="btn btn-outline-secondary rounded-pill px-4" disabled><i class="bi bi-arrow-left"></i> Back</button>
+          <button type="button" id="nextBtn" class="btn btn-primary rounded-pill px-4">Next <i class="bi bi-arrow-right"></i></button>
+        </div>
+      </form>
+      <div id="result" class="d-none text-center py-4">
+        <div class="success-icon"><i class="bi bi-check-lg"></i></div>
+        <h2>Assessment Completed!</h2>
+        <p class="text-muted">Thank you for taking the time. Your voluntary responses have been securely recorded.</p>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary rounded-pill px-5">Back to Dashboard</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const steps = [...document.querySelectorAll('.question-step')];
+let current = 0;
+const form = document.getElementById('assessmentForm');
+const next = document.getElementById('nextBtn');
+const prev = document.getElementById('prevBtn');
+
+function update() {
+  steps.forEach((s,i)=>s.classList.toggle('d-none', i !== current));
+  const pct = Math.round(((current+1)/steps.length)*100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `Question ${current+1} of ${steps.length}`;
+  document.getElementById('percentText').textContent = pct + '%';
+  prev.disabled = current === 0;
+  next.innerHTML = current === steps.length-1 ? 'Submit <i class="bi bi-check2"></i>' : 'Next <i class="bi bi-arrow-right"></i>';
+}
+function answered() {
+  return !!steps[current].querySelector('input[type=radio]:checked');
+}
+next.addEventListener('click', async () => {
+  if (!answered()) { alert('Please select an answer before continuing.'); return; }
+  if (current < steps.length-1) { current++; update(); window.scrollTo({top:0, behavior:'smooth'}); return; }
+
+  const data = new FormData(form);
+  const response = await fetch('{{ url_for("submit_assessment") }}', {method:'POST', body:data});
+  const result = await response.json();
+  if (result.success) {
+    form.classList.add('d-none');
+    document.querySelector('.assessment-card > .progress').classList.add('d-none');
+    document.querySelector('.assessment-card > .d-flex.justify-content-between').classList.add('d-none');
+    document.getElementById('result').classList.remove('d-none');
+  } else alert(result.message || 'Unable to submit assessment.');
+});
+prev.addEventListener('click', () => { if(current>0){current--;update();} });
+update();
+</script>
+{% endblock %}

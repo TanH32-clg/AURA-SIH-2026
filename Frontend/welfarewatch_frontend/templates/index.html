@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}WelfareWatch — Stronger Minds. Safer Missions.{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="container">
+    <div class="hero-card">
+      <div class="row align-items-center g-0">
+        <div class="col-lg-7 p-4 p-md-5">
+          <span class="eyebrow"><i class="bi bi-stars"></i> Personnel Welfare Intelligence</span>
+          <h1>Stronger Minds.<br><span>Safer Missions.</span></h1>
+          <p class="lead">AI-Based Predictive Personnel Stress & Welfare Monitoring System</p>
+          <p class="hero-copy">Early identification of stress, fatigue and burnout indicators — with privacy, dignity and human oversight at the center.</p>
+          <div class="d-flex flex-wrap gap-3">
+            <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg rounded-pill px-4">Get Started <i class="bi bi-arrow-right"></i></a>
+            <a href="#how" class="btn btn-outline-primary btn-lg rounded-pill px-4">Learn More</a>
+          </div>
+        </div>
+        <div class="col-lg-5 hero-visual">
+          <div class="hero-orb"><i class="bi bi-shield-lock-fill"></i></div>
+          <div class="mini-stat stat-a"><i class="bi bi-graph-up-arrow"></i><span>Early Risk<br><b>Detection</b></span></div>
+          <div class="mini-stat stat-b"><i class="bi bi-heart-pulse-fill"></i><span>Wellness<br><b>Support</b></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="py-5">
+  <div class="container">
+    <div class="section-heading text-center">
+      <span class="eyebrow">Why WelfareWatch?</span>
+      <h2>Proactive welfare, built for trust.</h2>
+      <p>Turn occupational signals and voluntary wellness inputs into actionable, supportive insights.</p>
+    </div>
+    <div class="row g-4 mt-2">
+      <div class="col-md-4"><div class="feature-card"><i class="bi bi-graph-up-arrow"></i><h5>Predictive Insights</h5><p>Identify changing stress and fatigue patterns before they become critical.</p></div></div>
+      <div class="col-md-4"><div class="feature-card"><i class="bi bi-person-check-fill"></i><h5>Voluntary Wellness</h5><p>Personnel control their wellness check-ins and can review their own trends.</p></div></div>
+      <div class="col-md-4"><div class="feature-card"><i class="bi bi-lock-fill"></i><h5>Privacy First</h5><p>Role-based access and data minimization protect sensitive welfare information.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="how" class="py-5 bg-soft">
+  <div class="container">
+    <div class="section-heading text-center">
+      <span class="eyebrow">How It Works</span>
+      <h2>Predict → Explain → Support</h2>
+    </div>
+    <div class="row g-4 mt-2">
+      {% for n, icon, title, text in [
+        ('01','bi-database-check','Secure Inputs','Duty, workload and voluntary wellness indicators are collected securely.'),
+        ('02','bi-cpu','AI Analysis','Models analyze patterns and changes over time to estimate risk.'),
+        ('03','bi-lightbulb','Explainable Results','Key contributing factors are shown instead of a black-box score.'),
+        ('04','bi-heart-fill','Welfare Action','Authorized personnel receive supportive recommendations for intervention.')
+      ] %}
+      <div class="col-md-6 col-lg-3"><div class="step-card"><span>{{ n }}</span><i class="bi {{ icon }}"></i><h6>{{ title }}</h6><p>{{ text }}</p></div></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section id="privacy" class="py-5">
+  <div class="container">
+    <div class="privacy-banner">
+      <div><i class="bi bi-shield-lock-fill"></i></div>
+      <div><h4>Welfare first. Never punishment.</h4><p>The prototype is designed as a decision-support system. AI predictions are not medical diagnoses and should not be used for disciplinary decisions.</p></div>
+    </div>
+  </div>
+</section>
+{% endblock %}

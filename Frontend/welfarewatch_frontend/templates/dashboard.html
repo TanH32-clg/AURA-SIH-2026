@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — WelfareWatch{% endblock %}
+{% block content %}
+<div class="dashboard-shell">
+  <aside class="sidebar">
+    <div class="side-brand"><span class="brand-mark"><i class="bi bi-shield-check"></i></span> WelfareWatch</div>
+    <a class="active"><i class="bi bi-grid"></i> Dashboard</a>
+    <a><i class="bi bi-heart-pulse"></i> My Wellness</a>
+    <a href="{{ url_for('assessment') }}"><i class="bi bi-clipboard2-check"></i> Self Assessment</a>
+    <a><i class="bi bi-bar-chart"></i> My Reports</a>
+    <a><i class="bi bi-book"></i> Resources</a>
+    <a><i class="bi bi-person"></i> Profile</a>
+    <a href="{{ url_for('logout') }}" class="mt-auto"><i class="bi bi-box-arrow-right"></i> Logout</a>
+  </aside>
+  <main class="dashboard-main">
+    <div class="dash-top">
+      <div><h2>Dashboard</h2><p>Welcome back, {{ name }}. Stay healthy, stay strong!</p></div>
+      <div class="profile-chip"><span class="avatar">{{ name[0]|upper }}</span><span>{{ name }}<small>ID: {{ session.get('personnel_id') }}</small></span></div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-md-4"><div class="metric-card"><small>Wellness Status</small><div class="metric-value"><span class="status-dot"></span> Good</div><small>Keep it up!</small></div></div>
+      <div class="col-md-4"><div class="metric-card"><small>Last Check-in</small><div class="metric-value"><i class="bi bi-calendar-check"></i> Ready</div><small>Complete a check-in today</small></div></div>
+      <div class="col-md-4"><div class="metric-card action-card"><div><small>Next Assessment</small><h5>Available now</h5></div><a href="{{ url_for('assessment') }}" class="btn btn-light btn-sm rounded-pill">Start <i class="bi bi-arrow-right"></i></a></div></div>
+    </div>
+
+    <div class="row g-3 mt-1">
+      <div class="col-lg-7"><div class="panel-card"><div class="d-flex justify-content-between"><h5>Wellness Trend</h5><small>Prototype view</small></div><div class="fake-chart"><div class="chart-line"></div><span class="y y1">High</span><span class="y y2">Moderate</span><span class="y y3">Low</span></div></div></div>
+      <div class="col-lg-5"><div class="panel-card"><h5>Quick Actions</h5><a href="{{ url_for('assessment') }}" class="quick-action primary"><i class="bi bi-clipboard2-heart"></i> Take Self Assessment <i class="bi bi-chevron-right ms-auto"></i></a><a class="quick-action"><i class="bi bi-lightbulb"></i> View Wellness Tips <i class="bi bi-chevron-right ms-auto"></i></a><a class="quick-action"><i class="bi bi-chat-heart"></i> Talk to Counselor <i class="bi bi-chevron-right ms-auto"></i></a></div></div>
+    </div>
+
+    <div class="row g-3 mt-1">
+      <div class="col-lg-8"><div class="panel-card"><h5>Your Well-being Matters</h5><p class="text-muted">A few minutes of honest reflection can help identify changes in your wellbeing and connect you with appropriate support.</p><a href="{{ url_for('assessment') }}" class="btn btn-primary rounded-pill">Start Self Assessment <i class="bi bi-arrow-right"></i></a></div></div>
+      <div class="col-lg-4"><div class="panel-card"><h5>Privacy Center</h5><p class="text-muted small">Your wellness responses are voluntary. Access is controlled through role-based permissions.</p><span class="privacy-pill"><i class="bi bi-lock-fill"></i> Privacy-first</span></div></div>
+    </div>
+  </main>
+</div>
+{% endblock %}
