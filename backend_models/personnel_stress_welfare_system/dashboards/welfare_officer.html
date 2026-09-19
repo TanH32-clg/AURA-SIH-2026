@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>High-Risk Personnel — Welfare Officer View</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  body { background:#0f1720; color:#e6edf3; font-family:'Segoe UI',system-ui,sans-serif; }
+  .card { background:#161f2c; border:1px solid #24313f; }
+  .navbar { background:#0b121a !important; border-bottom:1px solid #24313f; }
+  .risk-high { border-left:4px solid #b3261e; }
+  .risk-elevated { border-left:4px solid #b45309; }
+  .reason-chip { background:#1c2836; border:1px solid #2c3d4f; border-radius:6px; padding:4px 10px; font-size:0.8rem; margin:2px; display:inline-block; }
+  .reason-up { color:#ff8a80; }
+  .reason-down { color:#80cbc4; }
+  .confidential-banner { background:#3b2412; border:1px solid #7c4a12; color:#ffd28a; }
+  .btn-checkin { background:#2563eb; border:none; }
+</style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark px-3">
+  <span class="navbar-brand mb-0 h1">Personnel Welfare Monitoring — Welfare Officer Dashboard</span>
+  <span class="text-secondary small">Role: Welfare Officer (authorized) &middot; Access logged &amp; audited</span>
+</nav>
+
+<div class="container-fluid p-4">
+  <div class="confidential-banner rounded p-3 mb-4 small">
+    🔒 CONFIDENTIAL — This view contains individually identifiable welfare risk information.
+    Access is restricted to authorized welfare officers, is logged for audit, and must only be
+    used to initiate supportive, confidential outreach — never for disciplinary or career action.
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="mb-0">High-Risk Watchlist <span class="text-secondary small">(elevated + high tier, most recent day)</span></h5>
+    <div>
+      <select class="form-select form-select-sm d-inline-block w-auto bg-dark text-light border-secondary">
+        <option>All units</option>
+        <option>UNIT-007</option>
+        <option>UNIT-008</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="watchlist" class="d-flex flex-column gap-3">
+    <!-- cards injected below -->
+  </div>
+</div>
+
+<script>
+// Demo data — in production this calls GET /dashboard/welfare/high-risk
+const records = [
+  {
+    soldier_id: "SLD-00060", unit_id: "UNIT-007", risk_score: 99.1, risk_tier: "high",
+    reasons: [
+      { feature: "14-day wellness trend", direction: "increases", impact: 0.285 },
+      { feature: "21-day wellness trend", direction: "increases", impact: 0.203 },
+      { feature: "30-day avg duty hours", direction: "increases", impact: 0.106 },
+      { feature: "Unit transfers (last 2 yrs)", direction: "increases", impact: 0.038 }
+    ],
+    recommendation: "Priority confidential check-in recommended within 48h; consider rest rotation."
+  },
+  {
+    soldier_id: "SLD-00051", unit_id: "UNIT-007", risk_score: 98.7, risk_tier: "high",
+    reasons: [
+      { feature: "Recovery deficit ratio", direction: "increases", impact: 0.241 },
+      { feature: "Self-reported fatigue", direction: "increases", impact: 0.198 },
+      { feature: "Days since last approved leave", direction: "increases", impact: 0.091 }
+    ],
+    recommendation: "Priority confidential check-in recommended; review pending leave requests."
+  },
+  {
+    soldier_id: "SLD-00105", unit_id: "UNIT-008", risk_score: 94.8, risk_tier: "elevated",
+    reasons: [
+      { feature: "Workload spike (7d vs 30d)", direction: "increases", impact: 0.176 },
+      { feature: "Self-reported sleep quality", direction: "increases", impact: 0.132 }
+    ],
+    recommendation: "Schedule a routine welfare check-in within the week; monitor trend."
+  }
+];
+
+const wrap = document.getElementById('watchlist');
+records.forEach(r => {
+  const chips = r.reasons.map(reason => {
+    const cls = reason.direction === 'increases' ? 'reason-up' : 'reason-down';
+    const arrow = reason.direction === 'increases' ? '▲' : '▼';
+    return `<span class="reason-chip ${cls}">${arrow} ${reason.feature}</span>`;
+  }).join(' ');
+
+  const card = document.createElement('div');
+  card.className = `card p-3 risk-${r.risk_tier}`;
+  card.innerHTML = `
+    <div class="d-flex justify-content-between flex-wrap">
+      <div>
+        <div class="fw-bold">${r.soldier_id} <span class="text-secondary small">(${r.unit_id})</span></div>
+        <div class="text-secondary small">Risk score: ${r.risk_score}/100 &middot; Tier: ${r.risk_tier.toUpperCase()}</div>
+      </div>
+      <button class="btn btn-checkin btn-sm text-light">Initiate confidential check-in</button>
+    </div>
+    <div class="mt-2">${chips}</div>
+    <div class="mt-2 small"><strong>AI-recommended action:</strong> ${r.recommendation}</div>
+  `;
+  wrap.appendChild(card);
+});
+</script>
+</body>
+</html>

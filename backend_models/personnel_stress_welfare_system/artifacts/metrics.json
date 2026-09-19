@@ -1,0 +1,24 @@
+{
+  "gboost_kind": "xgboost",
+  "logistic_regression": {
+    "roc_auc": 0.9694,
+    "pr_auc": 0.7949,
+    "f1": 0.6068
+  },
+  "random_forest": {
+    "roc_auc": 0.9705,
+    "pr_auc": 0.8097,
+    "f1": 0.6285
+  },
+  "gradient_boosting": {
+    "kind": "xgboost",
+    "roc_auc": 0.9722,
+    "pr_auc": 0.8254,
+    "f1": 0.7116
+  },
+  "isolation_forest": {
+    "note": "unsupervised; reported AUC is informational only",
+    "roc_auc_vs_synthetic_label": 0.8246,
+    "flagged_rate": 0.08
+  }
+}

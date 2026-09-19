@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Unit Fatigue &amp; Welfare Trends — Commander View</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+  body { background:#0f1720; color:#e6edf3; font-family:'Segoe UI',system-ui,sans-serif; }
+  .card { background:#161f2c; border:1px solid #24313f; }
+  .stat-value { font-size:2rem; font-weight:700; }
+  .badge-low { background:#1f7a3f; }
+  .badge-moderate { background:#a17d1c; }
+  .badge-elevated { background:#b45309; }
+  .badge-high { background:#b3261e; }
+  .anon-note { color:#8ea3b0; font-size:0.85rem; }
+  .navbar { background:#0b121a !important; border-bottom:1px solid #24313f; }
+</style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark px-3">
+  <span class="navbar-brand mb-0 h1">Personnel Welfare Monitoring — Commander Dashboard</span>
+  <span class="text-secondary small">Role: Unit Commander &middot; Unit: <span id="unitLabel">UNIT-007</span></span>
+</nav>
+
+<div class="container-fluid p-4">
+  <p class="anon-note mb-4">
+    ⓘ This view shows <strong>aggregated, anonymized</strong> fatigue and workload trends only.
+    Individual identities and scores are not shown here — that level of detail is restricted
+    to authorized welfare officers for confidential follow-up.
+  </p>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card p-3 h-100">
+        <div class="text-secondary small">Unit average risk score</div>
+        <div class="stat-value" id="avgScore">62.4</div>
+        <div class="text-secondary small">/ 100</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card p-3 h-100">
+        <div class="text-secondary small">% personnel elevated/high risk</div>
+        <div class="stat-value" id="pctFlagged">18%</div>
+        <div class="text-secondary small">of <span id="nSoldiers">42</span> tracked</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card p-3 h-100">
+        <div class="text-secondary small">Avg weekly overtime</div>
+        <div class="stat-value">11.3h</div>
+        <div class="text-secondary small">vs 6h baseline</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card p-3 h-100">
+        <div class="text-secondary small">Wellness form response rate</div>
+        <div class="stat-value">61%</div>
+        <div class="text-secondary small">voluntary, last 7 days</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-lg-7">
+      <div class="card p-3 h-100">
+        <h6 class="text-secondary">Risk tier distribution (anonymized headcount)</h6>
+        <canvas id="tierChart" height="140"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="card p-3 h-100">
+        <h6 class="text-secondary">Top contributing factors this week</h6>
+        <canvas id="factorChart" height="180"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-12">
+      <div class="card p-3">
+        <h6 class="text-secondary">30-day workload trend vs recovery deficit (unit average)</h6>
+        <canvas id="trendChart" height="80"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <span class="badge badge-low">Low</span>
+    <span class="badge badge-moderate">Moderate</span>
+    <span class="badge badge-elevated">Elevated</span>
+    <span class="badge badge-high">High</span>
+    <span class="text-secondary small ms-2">Risk tiers are relative indicators to support workload balancing decisions, not a diagnosis.</span>
+  </div>
+</div>
+
+<script>
+// Demo data — in production this calls GET /dashboard/commander/{unit_id}
+const tierData = { low: 20, moderate: 14, elevated: 6, high: 2 };
+new Chart(document.getElementById('tierChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Low', 'Moderate', 'Elevated', 'High'],
+    datasets: [{
+      label: 'Personnel (anonymized count)',
+      data: [tierData.low, tierData.moderate, tierData.elevated, tierData.high],
+      backgroundColor: ['#1f7a3f', '#a17d1c', '#b45309', '#b3261e']
+    }]
+  },
+  options: { plugins: { legend: { display:false } }, scales: { y: { beginAtZero:true, ticks:{color:'#8ea3b0'} }, x:{ticks:{color:'#8ea3b0'}} } }
+});
+
+new Chart(document.getElementById('factorChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Workload spike', 'Recovery deficit', 'Wellness deviation', 'Leave backlog', 'Night shifts'],
+    datasets: [{ data: [32, 26, 21, 12, 9], backgroundColor: ['#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981'] }]
+  },
+  options: { plugins: { legend: { position:'bottom', labels:{color:'#e6edf3'} } } }
+});
+
+const days = Array.from({length:30}, (_,i) => `D${i+1}`);
+new Chart(document.getElementById('trendChart'), {
+  type: 'line',
+  data: {
+    labels: days,
+    datasets: [
+      { label: 'Avg 7d workload spike ratio', data: days.map((_,i)=> (1 + 0.15*Math.sin(i/4) + i*0.004).toFixed(2)), borderColor:'#3b82f6', tension:0.3 },
+      { label: 'Avg recovery deficit ratio', data: days.map((_,i)=> (1.2 + 0.2*Math.cos(i/5) + i*0.006).toFixed(2)), borderColor:'#ec4899', tension:0.3 }
+    ]
+  },
+  options: { plugins:{ legend:{labels:{color:'#e6edf3'}} }, scales:{ y:{ticks:{color:'#8ea3b0'}}, x:{ticks:{color:'#8ea3b0'}} } }
+});
+</script>
+</body>
+</html>
