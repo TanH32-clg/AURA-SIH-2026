@@ -49,8 +49,8 @@
 | **Problem Statement Title** | AI-Based Predictive Personnel Stress and Welfare Monitoring System for Uniformed Forces |
 | **Theme** | MedTech / BioTech / HealthTech |
 | **PS Category** | Software |
-| **Team ID** | 26RBU127 |
-| **Team Name** | AURA (AI for Understanding & Relief Assessment) |
+| **Team ID** | 151565 |
+| **Team Name** | AURA_26 |
 
 ## Overview
 
